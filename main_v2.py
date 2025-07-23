@@ -57,7 +57,10 @@ def load_and_process_data(uploaded_file):
                 dup + "_" + str(i) if i != 0 else dup for i in range(sum(cols == dup))
             ]
     df.columns = cols
-    if "_Rejected_Samples" in df.columns and "_Rejected_Samples_1" in df.columns:
+    if (
+        "_Rejected_Samples" in df.columns
+        and "_Rejected_Samples_1" in df.columns
+    ):
         df.rename(
             columns={
                 "_Rejected_Samples": "Rejected_Count",
@@ -66,7 +69,7 @@ def load_and_process_data(uploaded_file):
             inplace=True,
         )
     df["Batch_Number"] = pd.to_numeric(
-        df["Batch_Number"].astype(str).str.extract("(\d+)", expand=False),
+        df["Batch_Number"].astype(str).str.extract(r"(\d+)", expand=False),
         errors="coerce",
     )
     df.dropna(
