@@ -18,6 +18,7 @@ st.markdown("---")
 
 file = st.sidebar.file_uploader("Upload your dataset in excel format", type=["xlsx"])
 
+
 @st.cache_data
 def load_data(uploaded_file):
     if uploaded_file is not None:
@@ -25,6 +26,7 @@ def load_data(uploaded_file):
     else:
         st.warning("Please upload a dataset to view the data overview.")
     return None
+
 
 df_raw = load_data(file)
 if "df" not in st.session_state:
@@ -69,8 +71,8 @@ if "Material Number" in df_raw.columns and "Valuation" in df_raw.columns:
         step=0.1,
     )
     filtered_df = df_material[
-        (df_material["Success_rate"] >= rate_range[0]) &
-        (df_material["Success_rate"] <= rate_range[1])
+        (df_material["Success_rate"] >= rate_range[0])
+        & (df_material["Success_rate"] <= rate_range[1])
     ]
 
     # Vega-Lite chart with point selection using st.vega_lite_chart
@@ -81,9 +83,21 @@ if "Material Number" in df_raw.columns and "Valuation" in df_raw.columns:
             {"name": "grid", "select": "interval", "bind": "scales"},
         ],
         "encoding": {
-            "x": {"field": "Material Number", "type": "nominal", "title": "Material Number"},
-            "y": {"field": "Success_rate", "type": "quantitative", "title": "Success Rate (%)"},
-            "color": {"field": "Material Group", "type": "nominal", "title": "Material Group"},
+            "x": {
+                "field": "Material Number",
+                "type": "nominal",
+                "title": "Material Number",
+            },
+            "y": {
+                "field": "Success_rate",
+                "type": "quantitative",
+                "title": "Success Rate (%)",
+            },
+            "color": {
+                "field": "Material Group",
+                "type": "nominal",
+                "title": "Material Group",
+            },
             "tooltip": [
                 {"field": "Material Number", "type": "nominal"},
                 {"field": "Success_rate", "type": "quantitative"},
@@ -93,15 +107,10 @@ if "Material Number" in df_raw.columns and "Valuation" in df_raw.columns:
                 "value": 0.3,
             },
         },
-        "title": "Success Rate by Material Number"
+        "title": "Success Rate by Material Number",
     }
 
-    event = st.vega_lite_chart(
-        filtered_df,
-        spec,
-        key="vega_chart",
-        on_select="rerun"
-    )
+    event = st.vega_lite_chart(filtered_df, spec, key="vega_chart", on_select="rerun")
 
     # Show the raw event result for debugging/inspection
     st.write("Selected Material Number Details:", event)
@@ -123,7 +132,7 @@ if "Material Number" in df_raw.columns and "Valuation" in df_raw.columns:
         )
 
     if selected_material:
-        
+
         st.markdown(f"#### Details for Material Number: {selected_material}")
         details = (
             df_raw[df_raw["Material Number"] == selected_material]
@@ -131,4 +140,3 @@ if "Material Number" in df_raw.columns and "Valuation" in df_raw.columns:
             .to_dict(orient="records")
         )
         st.json(details)
-
