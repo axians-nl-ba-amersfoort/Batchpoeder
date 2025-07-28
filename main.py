@@ -52,7 +52,7 @@ def load_and_process_data(uploaded_file):
     df.columns = cols
     if '_Rejected_Samples' in df.columns and '_Rejected_Samples_1' in df.columns:
         df.rename(columns={'_Rejected_Samples': 'Rejected_Count', '_Rejected_Samples_1': 'Rejected_Percent'}, inplace=True)
-    df['Batch_Number'] = pd.to_numeric(df['Batch_Number'].astype(str).str.extract('(\d+)', expand=False), errors='coerce')
+    df['Batch_Number'] = pd.to_numeric(df['Batch_Number'].astype(str).str.extract('r(\d+)', expand=False), errors='coerce')
     df.dropna(subset=['Batch_Number', 'Inspection_Results', 'MIC_Description', 'Production_Line', 'Material_Group'], inplace=True)
     df = df.sort_values(by='Batch_Number').reset_index(drop=True)
 
